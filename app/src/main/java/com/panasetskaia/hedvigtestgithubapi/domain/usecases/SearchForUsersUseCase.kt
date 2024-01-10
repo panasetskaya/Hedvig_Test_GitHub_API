@@ -1,5 +1,7 @@
-package com.panasetskaia.hedvigtestgithubapi.domain
+package com.panasetskaia.hedvigtestgithubapi.domain.usecases
 
+import com.panasetskaia.hedvigtestgithubapi.domain.MainRepository
+import com.panasetskaia.hedvigtestgithubapi.domain.RepoEntity
 import javax.inject.Inject
 
 class SearchForUsersUseCase @Inject constructor (private val repo: MainRepository) {
