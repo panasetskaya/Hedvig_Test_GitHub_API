@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Hedvig Test GitHub API</string>
+
+    //error msg
+    <string name="offline_error">You are offline</string>
+    <string name="network_error">Network error</string>
+    <string name="nothing_found">Nothing found, sorry!</string>
+    <string name="something_wrong">Sorry, something went wrong</string>
+    <string name="no_repo">The user doesn\'t seem to have any public repositories</string>
 </resources>
