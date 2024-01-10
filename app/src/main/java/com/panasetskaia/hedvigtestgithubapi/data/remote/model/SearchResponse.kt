@@ -4,8 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ContributorResponse(
-
-    @SerialName("login")
-    val login: String? = null
+data class SearchResponse(
+    @SerialName("items")
+    val items: ArrayList<GitHubUserResponse>?,
 )

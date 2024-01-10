@@ -6,10 +6,11 @@ import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import javax.inject.Inject
 
 const val BASE_URL = "https://api.github.com/"
 
-object Networking {
+class Networking @Inject constructor() {
     private var okhttpClient: OkHttpClient? = null
     private var retrofit: Retrofit? = null
 
@@ -20,7 +21,7 @@ object Networking {
     val githubApi: GithubApi
         get() = retrofit?.create(GithubApi::class.java) ?: error("retrofit is not initialized")
 
-    fun init(context: Context) {
+    init {
         okhttpClient = OkHttpClient.Builder().build()
 
         retrofit = Retrofit.Builder()

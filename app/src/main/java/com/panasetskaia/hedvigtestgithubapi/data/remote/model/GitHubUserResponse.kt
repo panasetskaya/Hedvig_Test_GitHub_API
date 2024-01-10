@@ -7,12 +7,9 @@ import kotlinx.serialization.Serializable
 data class GitHubUserResponse(
 
     @SerialName("login")
-    val login: String?,
+    val login: String? = null,
 
     @SerialName("repos_url")
-    val reposUrl: String?,
-
-    @SerialName("message")
-    val errorMessage: String?
+    val reposUrl: String? = null
 
 )

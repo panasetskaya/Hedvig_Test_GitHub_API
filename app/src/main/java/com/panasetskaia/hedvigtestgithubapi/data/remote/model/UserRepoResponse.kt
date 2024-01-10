@@ -7,15 +7,15 @@ import kotlinx.serialization.Serializable
 data class UserRepoResponse(
 
     @SerialName("id")
-    val id: Long?,
+    val id: Long? = null,
 
     @SerialName("name")
-    val title: String?,
+    val title: String? = null,
 
     @SerialName("languages_url")
-    val languagesUrl: String?,
+    val languagesUrl: String? = null,
 
     @SerialName("contributors_url")
-    val contributorsUrl: String?
+    val contributorsUrl: String? = null
 
 )

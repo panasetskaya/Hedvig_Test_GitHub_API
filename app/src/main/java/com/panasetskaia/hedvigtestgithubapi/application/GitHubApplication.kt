@@ -6,9 +6,4 @@ import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class GitHubApplication: Application() {
-
-    override fun onCreate() {
-        super.onCreate()
-        Networking.init(this)
-    }
 }

@@ -1,4 +1,4 @@
-package com.panasetskaia.hedvigtestgithubapi.domain
+package com.panasetskaia.hedvigtestgithubapi.domain.models
 
 data class RepoEntity(
     val id: Long?,
