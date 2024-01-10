@@ -73,10 +73,20 @@ dependencies {
     implementation ("com.google.dagger:hilt-android:2.50")
     kapt ("com.google.dagger:hilt-compiler:2.50")
     kapt ("androidx.hilt:hilt-compiler:1.1.0")
-//    androidTestImplementation  ("com.google.dagger:hilt-android-testing:2.50")
-//    kaptAndroidTest ("com.google.dagger:hilt-compiler:2.50")
-//    testImplementation ("com.google.dagger:hilt-android-testing:2.50")
-//    kaptTest ("com.google.dagger:hilt-compiler:2.50")
+
+    //remote
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.2")
+    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+    implementation ("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
+    implementation ("com.squareup.okhttp3:okhttp:4.9.2")
+
+    //coroutines
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+
+    //AppAuth
+    implementation ("net.openid:appauth:0.9.1")
 }
 
 kapt {
