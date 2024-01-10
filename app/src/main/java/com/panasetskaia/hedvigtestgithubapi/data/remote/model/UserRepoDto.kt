@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UserRepoResponse(
+data class UserRepoDto(
 
     @SerialName("id")
     val id: Long? = null,

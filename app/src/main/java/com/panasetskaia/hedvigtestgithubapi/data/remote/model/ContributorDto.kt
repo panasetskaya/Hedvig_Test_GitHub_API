@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ContributorResponse(
+data class ContributorDto(
 
     @SerialName("login")
     val login: String? = null

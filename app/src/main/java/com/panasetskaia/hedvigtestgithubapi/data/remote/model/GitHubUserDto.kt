@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class GitHubUserResponse(
+data class GitHubUserDto(
 
     @SerialName("login")
     val login: String? = null,

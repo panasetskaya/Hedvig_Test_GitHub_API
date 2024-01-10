@@ -5,7 +5,7 @@ import com.panasetskaia.hedvigtestgithubapi.domain.models.RepoDetails
 import com.panasetskaia.hedvigtestgithubapi.domain.models.RepoEntity
 
 interface MainRepository {
-    suspend fun searchForUsersByQuery(query: String): List<GitHubUser>
-    suspend fun searchForRepositoriesByUser(user: GitHubUser): List<RepoEntity>
-    suspend fun getRepoDetails(repoId: Long): RepoDetails
+    suspend fun searchForUsersByQuery(query: String): NetworkResult<List<GitHubUser>>
+    suspend fun searchForRepositoriesByUser(user: GitHubUser): NetworkResult<List<RepoEntity>>
+    suspend fun getRepoDetails(repo: RepoEntity): NetworkResult<RepoDetails>
 }
