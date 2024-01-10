@@ -48,12 +48,21 @@ class MainRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getRepoDetails(repo: RepoEntity): NetworkResult<RepoDetails> {
-        try {
-
+        return try {
+            val contributorsPath = repo.contributorsUrl?.let { getShortPath(it) }
+            val languagesPath = repo.languagesUrl?.let { getShortPath(it) }
+            val contributorsDtoArray =
+                contributorsPath?.let { networking.githubApi.getContributors(it) } ?: ArrayList()
+            val languagesJson = languagesPath?.let { networking.githubApi.getLanguages(it) }
+            val contributors = mapper.mapContributorsDtoArrayToStringList(contributorsDtoArray)
+            val languages = languagesJson?.let { decodeKeysFromJson(it) } ?: listOf()
+            val repoDetails = RepoDetails(
+                languages, contributors
+            )
+            NetworkResult.success(repoDetails)
         } catch (exception: Exception) {
-            return handleException(exception)
+            handleException(exception)
         }
-        return NetworkResult.error(textResourceManager.somethingWrongMsg())
     }
 
     //the names of repo languages are the keys in the JsonObject
@@ -72,5 +81,4 @@ class MainRepositoryImpl @Inject constructor(
             else -> NetworkResult.error(textResourceManager.somethingWrongMsg())
         }
     }
-
 }
