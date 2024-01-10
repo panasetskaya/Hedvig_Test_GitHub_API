@@ -1,5 +1,5 @@
 package com.panasetskaia.hedvigtestgithubapi.domain
 
-interface SearchRepository {
+interface MainRepository {
     suspend fun searchForUsers(query: String): List<RepoEntity>
 }
