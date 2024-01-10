@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -30,8 +32,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
         jvmTarget = "1.8"
@@ -66,4 +68,17 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    // di
+    implementation ("com.google.dagger:hilt-android:2.50")
+    kapt ("com.google.dagger:hilt-compiler:2.50")
+    kapt ("androidx.hilt:hilt-compiler:1.1.0")
+//    androidTestImplementation  ("com.google.dagger:hilt-android-testing:2.50")
+//    kaptAndroidTest ("com.google.dagger:hilt-compiler:2.50")
+//    testImplementation ("com.google.dagger:hilt-android-testing:2.50")
+//    kaptTest ("com.google.dagger:hilt-compiler:2.50")
+}
+
+kapt {
+    correctErrorTypes = true
 }
