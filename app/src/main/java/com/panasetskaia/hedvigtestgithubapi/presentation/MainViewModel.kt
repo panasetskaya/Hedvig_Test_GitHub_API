@@ -1,15 +1,10 @@
 package com.panasetskaia.hedvigtestgithubapi.presentation
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.map
 import com.panasetskaia.hedvigtestgithubapi.R
 import com.panasetskaia.hedvigtestgithubapi.application.GitHubApplication
 import com.panasetskaia.hedvigtestgithubapi.domain.Status
@@ -19,15 +14,6 @@ import com.panasetskaia.hedvigtestgithubapi.domain.usecases.GetRepoDetailsUseCas
 import com.panasetskaia.hedvigtestgithubapi.domain.usecases.SearchForReposUseCase
 import com.panasetskaia.hedvigtestgithubapi.domain.usecases.SearchForUsersByQueryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,12 +25,6 @@ class MainViewModel @Inject constructor(
     private val application: GitHubApplication
 ) : ViewModel() {
 
-//    private val _foundUsers = MutableSharedFlow<PagingData<GitHubUser>>(
-//        replay = 1,
-//        onBufferOverflow = BufferOverflow.DROP_OLDEST
-//    )
-    val foundUsers: Flow<PagingData<GitHubUser>> = flowOf()
-
     private val _searchScreenState: MutableState<SearchScreenState> =
         mutableStateOf(SearchScreenState.Initial)
     val searchScreenState: State<SearchScreenState> = _searchScreenState
@@ -52,9 +32,6 @@ class MainViewModel @Inject constructor(
     private val _detailsScreenState: MutableState<DetailsScreenState> =
         mutableStateOf(DetailsScreenState.Loading)
     val detailsScreenState: State<DetailsScreenState> = _detailsScreenState
-
-    private val _toastMessage = MutableStateFlow<Event<Int>?>(null)
-    val toastMessage = _toastMessage.asStateFlow()
 
     fun loadDetails(repo: RepoEntity) {
         viewModelScope.launch {
@@ -90,8 +67,9 @@ class MainViewModel @Inject constructor(
             val result = searchForRepos(user)
             when (result.status) {
                 Status.SUCCESS -> {
-                    _searchScreenState.value = result.data?.let { SearchScreenState.RepoLoadingSuccess(it) }
-                        ?: SearchScreenState.Failure (application.applicationContext.getString(R.string.no_repo))
+                    _searchScreenState.value =
+                        result.data?.let { SearchScreenState.RepoLoadingSuccess(it) }
+                            ?: SearchScreenState.Failure(application.applicationContext.getString(R.string.no_repo))
                 }
 
                 Status.ERROR -> {

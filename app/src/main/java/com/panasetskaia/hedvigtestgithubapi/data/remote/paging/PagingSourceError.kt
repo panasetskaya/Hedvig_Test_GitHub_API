@@ -15,7 +15,6 @@ class PagingSourceError : PagingSource<Int, GitHubUser>() {
         return try {
             throw OfflineError()
         } catch (e: OfflineError) {
-            Log.d("MYTAG", "PagingSourceError: error caught")
             LoadResult.Error(e)
         }
     }

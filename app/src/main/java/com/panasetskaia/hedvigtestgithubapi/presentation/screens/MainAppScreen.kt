@@ -24,7 +24,7 @@ fun MainAppScreen(
             homeScreenContent = {
                 SearchScreen(viewModel = viewModel, paddingValues = newPaddingValues) {
                     viewModel.loadDetails(it)
-                    navigationState.navigateToDetailsScreen(screenSlashesInRepoName(it.title ?: "") )
+                    navigationState.navigateToDetailsScreen(screenSlashesInRepoName(it.title ?: ""))
                 }
             },
             detailsScreenContent = {

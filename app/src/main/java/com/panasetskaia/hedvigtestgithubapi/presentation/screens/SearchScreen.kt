@@ -1,7 +1,6 @@
 package com.panasetskaia.hedvigtestgithubapi.presentation.screens
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,7 +23,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -33,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -44,9 +41,7 @@ import com.panasetskaia.hedvigtestgithubapi.data.OfflineError
 import com.panasetskaia.hedvigtestgithubapi.domain.models.RepoEntity
 import com.panasetskaia.hedvigtestgithubapi.presentation.MainViewModel
 import com.panasetskaia.hedvigtestgithubapi.presentation.SearchScreenState
-import kotlinx.coroutines.flow.collectLatest
 import retrofit2.HttpException
-import java.net.UnknownHostException
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,28 +53,12 @@ fun SearchScreen(
 
     val searchScreenState by viewModel.searchScreenState
 
-    val context = LocalContext.current
-
     var query by rememberSaveable {
         mutableStateOf("")
     }
 
     var isSearchActive by rememberSaveable {
         mutableStateOf(false)
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel
-            .toastMessage
-            .collectLatest { event ->
-                event?.getContentIfNotHandled()?.let { stringResource ->
-                    Toast.makeText(
-                        context,
-                        stringResource,
-                        Toast.LENGTH_SHORT,
-                    ).show()
-                }
-            }
     }
 
     Scaffold(
@@ -151,20 +130,10 @@ fun SearchScreen(
                         }
                         items(userItems.itemCount) { index ->
                             userItems[index]?.let {
-                                Text(
-                                    text = it.login ?: "",
-                                    modifier = Modifier
-                                        .padding(
-                                            start = 8.dp,
-                                            top = 4.dp,
-                                            end = 8.dp,
-                                            bottom = 4.dp
-                                        )
-                                        .clickable {
-                                            isSearchActive = false
-                                            viewModel.loadRepos(it)
-                                        }
-                                )
+                                ItemBox(s = it.login ?: "") {
+                                    isSearchActive = false
+                                    viewModel.loadRepos(it)
+                                }
                             }
                         }
                     }
@@ -179,15 +148,7 @@ fun SearchScreen(
         }
 
         if (searchScreenState is SearchScreenState.Loading) {
-            Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            CentralProgressIndicator(paddingValues)
         }
 
         if (searchScreenState is SearchScreenState.RepoLoadingSuccess) {
@@ -200,19 +161,7 @@ fun SearchScreen(
                 verticalArrangement = Arrangement.Top
             ) {
                 items(items) { repo ->
-                    Text(
-                        text = repo.title ?: "",
-                        modifier = Modifier
-                            .padding(
-                                start = 16.dp,
-                                top = 8.dp,
-                                end = 16.dp,
-                                bottom = 8.dp
-                            )
-                            .clickable {
-                                onRepoClick(repo)
-                            }
-                    )
+                    ItemBox(repo.title ?: "") { onRepoClick(repo) }
                 }
             }
         }
@@ -224,8 +173,30 @@ fun SearchScreen(
             )
         }
     }
+}
 
-
+@Composable
+fun ItemBox(
+    s: String,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .padding(
+                start = 16.dp,
+                top = 8.dp,
+                end = 16.dp,
+                bottom = 8.dp
+            )
+            .fillMaxWidth()
+            .clickable {
+                onClick()
+            }
+    ) {
+        Text(
+            text = s,
+        )
+    }
 }
 
 
@@ -280,6 +251,7 @@ fun SearchError(e: Throwable) {
             Log.d("MYTAG", e.stackTraceToString())
             stringResource(id = R.string.nothing_found)
         }
+
         is OfflineError -> stringResource(id = R.string.offline_error)
         else -> stringResource(id = R.string.something_wrong)
     }

@@ -1,22 +1,15 @@
 package com.panasetskaia.hedvigtestgithubapi.data
 
-import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.os.Build
-import android.util.Log
-import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.PagingSource
 import com.panasetskaia.hedvigtestgithubapi.application.GitHubApplication
 import com.panasetskaia.hedvigtestgithubapi.data.remote.BASE_URL
 import com.panasetskaia.hedvigtestgithubapi.data.remote.Networking
-import com.panasetskaia.hedvigtestgithubapi.data.remote.NetworkingImpl
 import com.panasetskaia.hedvigtestgithubapi.data.remote.RepoMapper
-import com.panasetskaia.hedvigtestgithubapi.data.remote.model.GitHubUserDto
 import com.panasetskaia.hedvigtestgithubapi.data.remote.paging.PagingFactory
 import com.panasetskaia.hedvigtestgithubapi.data.remote.paging.PagingSourceError
 import com.panasetskaia.hedvigtestgithubapi.domain.MainRepository
@@ -38,7 +31,6 @@ class MainRepositoryImpl @Inject constructor(
 
     override suspend fun searchForUsersByQuery(query: String): Flow<PagingData<GitHubUser>> {
         val isNetworkAvailable = isNetworkAvailable()
-        Log.d("MYTAG", "Network available: $isNetworkAvailable")
         if (isNetworkAvailable) {
             val networking = Networking.factory(query)
             val pagingFactory = PagingFactory(networking, mapper)
@@ -86,7 +78,8 @@ class MainRepositoryImpl @Inject constructor(
                 val contributorsPath = repo.contributorsUrl?.let { getShortPath(it) }
                 val languagesPath = repo.languagesUrl?.let { getShortPath(it) }
                 val contributorsDtoArray =
-                    contributorsPath?.let { networking.githubApi.getContributors(it) } ?: ArrayList()
+                    contributorsPath?.let { networking.githubApi.getContributors(it) }
+                        ?: ArrayList()
                 val languagesJson = languagesPath?.let { networking.githubApi.getLanguages(it) }
                 val contributors = mapper.mapContributorsDtoArrayToStringList(contributorsDtoArray)
                 val languages = languagesJson?.let { decodeKeysFromJson(it) } ?: listOf()
@@ -122,8 +115,9 @@ class MainRepositoryImpl @Inject constructor(
     private fun isNetworkAvailable(): Boolean {
         val connectivityManager = getSystemService(
             application.applicationContext,
-            ConnectivityManager::class.java)
-        val nw      = connectivityManager?.activeNetwork ?: return false
+            ConnectivityManager::class.java
+        )
+        val nw = connectivityManager?.activeNetwork ?: return false
         val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
         return when {
             actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
