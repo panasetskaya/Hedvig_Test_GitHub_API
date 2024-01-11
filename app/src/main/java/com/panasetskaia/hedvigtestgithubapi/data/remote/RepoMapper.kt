@@ -24,13 +24,7 @@ class RepoMapper @Inject constructor() {
         )
     }
 
-    fun mapUserResponseArrayToEntityList(arrayList: ArrayList<GitHubUserDto>): List<GitHubUser> {
-        return arrayList.map { dto ->
-            mapUserResponseToEntity(dto)
-        }
-    }
-
-    private fun mapUserResponseToEntity(dto: GitHubUserDto): GitHubUser {
+    fun mapUserResponseToEntity(dto: GitHubUserDto): GitHubUser {
         return GitHubUser(
             dto.login,
             dto.reposUrl

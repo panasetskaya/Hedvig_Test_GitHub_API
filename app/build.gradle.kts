@@ -91,6 +91,9 @@ dependencies {
 
     //compose navigation
     implementation("androidx.navigation:navigation-compose:2.7.3")
+
+    //paging
+    implementation("androidx.paging:paging-compose:3.2.1")
 }
 
 kapt {
