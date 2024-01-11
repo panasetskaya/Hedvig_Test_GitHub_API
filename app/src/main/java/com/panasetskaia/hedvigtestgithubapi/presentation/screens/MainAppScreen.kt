@@ -31,7 +31,9 @@ fun MainAppScreen(
                 DetailsScreen(
                     viewModel = viewModel, paddingValues = newPaddingValues,
                     repoName = it
-                )
+                ) {
+                    navigationState.navHostController.popBackStack()
+                }
             }
         )
     }
