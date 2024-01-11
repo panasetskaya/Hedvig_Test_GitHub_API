@@ -6,5 +6,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SearchResponse(
     @SerialName("items")
-    val items: ArrayList<GitHubUserDto>?,
+    val items: ArrayList<GitHubUserDto>,
+
+    @SerialName("total_count")
+    val totalCount: Long
 )

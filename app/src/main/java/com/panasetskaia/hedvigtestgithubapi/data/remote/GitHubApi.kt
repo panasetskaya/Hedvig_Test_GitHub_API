@@ -37,9 +37,11 @@ interface GithubApi {
     @GET("search/users")
     suspend fun searchForUsers(
         @Query(QUERY) query: String = "",
+        @Query(PAGE) page: Int
     ): SearchResponse
 
     companion object {
         private const val QUERY = "q"
+        private const val PAGE = "page"
     }
 }

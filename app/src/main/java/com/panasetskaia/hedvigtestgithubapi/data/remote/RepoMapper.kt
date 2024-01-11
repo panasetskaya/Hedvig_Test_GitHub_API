@@ -30,7 +30,7 @@ class RepoMapper @Inject constructor() {
         }
     }
 
-    private fun mapUserResponseToEntity(dto: GitHubUserDto): GitHubUser {
+    fun mapUserResponseToEntity(dto: GitHubUserDto): GitHubUser {
         return GitHubUser(
             dto.login,
             dto.reposUrl

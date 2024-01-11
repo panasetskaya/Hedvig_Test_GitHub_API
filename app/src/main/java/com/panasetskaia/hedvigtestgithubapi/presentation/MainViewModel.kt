@@ -6,6 +6,10 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.map
 import com.panasetskaia.hedvigtestgithubapi.R
 import com.panasetskaia.hedvigtestgithubapi.application.GitHubApplication
 import com.panasetskaia.hedvigtestgithubapi.domain.Status
@@ -15,8 +19,15 @@ import com.panasetskaia.hedvigtestgithubapi.domain.usecases.GetRepoDetailsUseCas
 import com.panasetskaia.hedvigtestgithubapi.domain.usecases.SearchForReposUseCase
 import com.panasetskaia.hedvigtestgithubapi.domain.usecases.SearchForUsersByQueryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,6 +38,12 @@ class MainViewModel @Inject constructor(
     private val getDetails: GetRepoDetailsUseCase,
     private val application: GitHubApplication
 ) : ViewModel() {
+
+//    private val _foundUsers = MutableSharedFlow<PagingData<GitHubUser>>(
+//        replay = 1,
+//        onBufferOverflow = BufferOverflow.DROP_OLDEST
+//    )
+    val foundUsers: Flow<PagingData<GitHubUser>> = flowOf()
 
     private val _searchScreenState: MutableState<SearchScreenState> =
         mutableStateOf(SearchScreenState.Initial)
@@ -62,23 +79,7 @@ class MainViewModel @Inject constructor(
             viewModelScope.launch {
                 _searchScreenState.value = SearchScreenState.Loading
                 val result = searchForUsers(query)
-                when (result.status) {
-                    Status.SUCCESS -> {
-                        result.data?.let {
-                            if (it.isEmpty()) {
-                                _toastMessage.value =Event(R.string.nothing_found)
-                            }
-                        }
-                        _searchScreenState.value =
-                            result.data?.let { SearchScreenState.UserSearchSuccess(it) }
-                                ?: SearchScreenState.Failure (application.applicationContext.getString(R.string.something_wrong))
-                    }
-
-                    Status.ERROR -> {
-                        _searchScreenState.value = result.msg?.let { SearchScreenState.Failure(it) }
-                            ?: SearchScreenState.Failure(application.applicationContext.getString(R.string.something_wrong))
-                    }
-                }
+                _searchScreenState.value = SearchScreenState.UserSearchFinished(result)
             }
         }
     }
