@@ -1,18 +1,21 @@
 package com.panasetskaia.hedvigtestgithubapi.di
 
 import android.content.Context
-import com.panasetskaia.hedvigtestgithubapi.data.TextResourceManager
+import com.panasetskaia.hedvigtestgithubapi.application.GitHubApplication
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class ResourceModule {
+object AppModule {
+
+    @Singleton
     @Provides
-    fun provideTextResourceManager(@ApplicationContext appContext: Context): TextResourceManager {
-        return TextResourceManager(appContext)
+    fun provideApplication(@ApplicationContext app: Context): GitHubApplication {
+        return app as GitHubApplication
     }
 }
