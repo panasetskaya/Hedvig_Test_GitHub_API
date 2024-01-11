@@ -9,7 +9,7 @@ data class UserRepoDto(
     @SerialName("id")
     val id: Long? = null,
 
-    @SerialName("name")
+    @SerialName("full_name")
     val title: String? = null,
 
     @SerialName("languages_url")
