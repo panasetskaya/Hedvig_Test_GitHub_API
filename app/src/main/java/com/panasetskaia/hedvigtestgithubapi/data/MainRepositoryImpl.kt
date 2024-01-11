@@ -61,35 +61,44 @@ class MainRepositoryImpl @Inject constructor(
     }
 
     override suspend fun searchForRepositoriesByUser(user: GitHubUser): NetworkResult<List<RepoEntity>> {
-        try {
-            val networking = Networking.factory(null)
-            user.reposUrl?.let {
-                val shortPath = getShortPath(it)
-                val response = networking.githubApi.getRepositories(shortPath)
-                return NetworkResult.success(mapper.mapRepoResponseArrayToEntityList(response))
+        if (isNetworkAvailable()) {
+            try {
+                val networking = Networking.factory(null)
+                user.reposUrl?.let {
+                    val shortPath = getShortPath(it)
+                    val response = networking.githubApi.getRepositories(shortPath)
+                    return NetworkResult.success(mapper.mapRepoResponseArrayToEntityList(response))
+                }
+            } catch (exception: Exception) {
+                return handleException(exception)
             }
-        } catch (exception: Exception) {
-            return handleException(exception)
+            return NetworkResult.error(textResourceManager.noRepositoriesMsg())
+        } else {
+            return NetworkResult.error(textResourceManager.offlineErrorMsg())
         }
-        return NetworkResult.error(textResourceManager.noRepositoriesMsg())
+
     }
 
     override suspend fun getRepoDetails(repo: RepoEntity): NetworkResult<RepoDetails> {
-        return try {
-            val networking = Networking.factory(null)
-            val contributorsPath = repo.contributorsUrl?.let { getShortPath(it) }
-            val languagesPath = repo.languagesUrl?.let { getShortPath(it) }
-            val contributorsDtoArray =
-                contributorsPath?.let { networking.githubApi.getContributors(it) } ?: ArrayList()
-            val languagesJson = languagesPath?.let { networking.githubApi.getLanguages(it) }
-            val contributors = mapper.mapContributorsDtoArrayToStringList(contributorsDtoArray)
-            val languages = languagesJson?.let { decodeKeysFromJson(it) } ?: listOf()
-            val repoDetails = RepoDetails(
-                languages, contributors
-            )
-            NetworkResult.success(repoDetails)
-        } catch (exception: Exception) {
-            handleException(exception)
+        if (isNetworkAvailable()) {
+            return try {
+                val networking = Networking.factory(null)
+                val contributorsPath = repo.contributorsUrl?.let { getShortPath(it) }
+                val languagesPath = repo.languagesUrl?.let { getShortPath(it) }
+                val contributorsDtoArray =
+                    contributorsPath?.let { networking.githubApi.getContributors(it) } ?: ArrayList()
+                val languagesJson = languagesPath?.let { networking.githubApi.getLanguages(it) }
+                val contributors = mapper.mapContributorsDtoArrayToStringList(contributorsDtoArray)
+                val languages = languagesJson?.let { decodeKeysFromJson(it) } ?: listOf()
+                val repoDetails = RepoDetails(
+                    languages, contributors
+                )
+                NetworkResult.success(repoDetails)
+            } catch (exception: Exception) {
+                handleException(exception)
+            }
+        } else {
+            return NetworkResult.error(textResourceManager.offlineErrorMsg())
         }
     }
 
