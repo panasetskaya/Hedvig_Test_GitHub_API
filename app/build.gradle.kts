@@ -89,8 +89,8 @@ dependencies {
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
 
-//    //AppAuth
-//    implementation ("net.openid:appauth:0.9.1")
+    //compose navigation
+    implementation("androidx.navigation:navigation-compose:2.7.3")
 }
 
 kapt {

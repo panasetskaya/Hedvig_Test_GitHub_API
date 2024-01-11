@@ -10,4 +10,6 @@
     <string name="search_for_user">Search for user</string>
     <string name="look_for_repo">Search for user by their login and you\'ll see their public repositories</string>
     <string name="search_icon">Search icon</string>
+    <string name="go">Go!</string>
+    <string name="clear_search">Clear search query</string>
 </resources>
