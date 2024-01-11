@@ -7,4 +7,7 @@
     <string name="nothing_found">Nothing found, sorry!</string>
     <string name="something_wrong">Sorry, something went wrong</string>
     <string name="no_repo">The user doesn\'t seem to have any public repositories</string>
+    <string name="search_for_user">Search for user</string>
+    <string name="look_for_repo">Search for user by their login and you\'ll see their public repositories</string>
+    <string name="search_icon">Search icon</string>
 </resources>

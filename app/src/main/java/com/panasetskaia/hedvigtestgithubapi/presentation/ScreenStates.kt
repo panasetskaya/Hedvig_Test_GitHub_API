@@ -8,14 +8,9 @@ sealed class SearchScreenState {
 
     data object Initial: SearchScreenState()
     data object Loading: SearchScreenState()
-    data class Success(val list: List<GitHubUser>): SearchScreenState()
-    data class Failure (val msg: String): SearchScreenState()
-
-}
-sealed class RepoScreenState {
-    data object Loading: RepoScreenState()
-    data class Success(val list: List<RepoEntity>): RepoScreenState()
-    data class Failure (val msg: String): RepoScreenState()
+    data class UserSearchSuccess(val list: List<GitHubUser>): SearchScreenState()
+    data class RepoLoadingSuccess(val list: List<RepoEntity>): SearchScreenState()
+    data class Failure(val msg: String): SearchScreenState()
 
 }
 

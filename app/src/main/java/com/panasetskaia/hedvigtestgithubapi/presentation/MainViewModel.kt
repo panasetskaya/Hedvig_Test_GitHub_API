@@ -1,6 +1,5 @@
 package com.panasetskaia.hedvigtestgithubapi.presentation
 
-import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -16,6 +15,8 @@ import com.panasetskaia.hedvigtestgithubapi.domain.usecases.GetRepoDetailsUseCas
 import com.panasetskaia.hedvigtestgithubapi.domain.usecases.SearchForReposUseCase
 import com.panasetskaia.hedvigtestgithubapi.domain.usecases.SearchForUsersByQueryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,13 +32,12 @@ class MainViewModel @Inject constructor(
         mutableStateOf(SearchScreenState.Initial)
     val searchScreenState: State<SearchScreenState> = _searchScreenState
 
-    private val _repoScreenState: MutableState<RepoScreenState> =
-        mutableStateOf(RepoScreenState.Loading)
-    val repoScreenState: State<RepoScreenState> = _repoScreenState
-
     private val _detailsScreenState: MutableState<DetailsScreenState> =
         mutableStateOf(DetailsScreenState.Loading)
     val detailsScreenState: State<DetailsScreenState> = _detailsScreenState
+
+    private val _toastMessage = MutableStateFlow<Event<Int>?>(null)
+    val toastMessage = _toastMessage.asStateFlow()
 
     fun loadDetails(repo: RepoEntity) {
         viewModelScope.launch {
@@ -64,9 +64,14 @@ class MainViewModel @Inject constructor(
                 val result = searchForUsers(query)
                 when (result.status) {
                     Status.SUCCESS -> {
+                        result.data?.let {
+                            if (it.isEmpty()) {
+                                _toastMessage.value =Event(R.string.nothing_found)
+                            }
+                        }
                         _searchScreenState.value =
-                            result.data?.let { SearchScreenState.Success(it) }
-                                ?: SearchScreenState.Failure(application.applicationContext.getString(R.string.something_wrong))
+                            result.data?.let { SearchScreenState.UserSearchSuccess(it) }
+                                ?: SearchScreenState.Failure (application.applicationContext.getString(R.string.something_wrong))
                     }
 
                     Status.ERROR -> {
@@ -80,42 +85,23 @@ class MainViewModel @Inject constructor(
 
     fun loadRepos(user: GitHubUser) {
         viewModelScope.launch {
-            _repoScreenState.value = RepoScreenState.Loading
+            _searchScreenState.value = SearchScreenState.Loading
             val result = searchForRepos(user)
             when (result.status) {
                 Status.SUCCESS -> {
-                    _repoScreenState.value = result.data?.let { RepoScreenState.Success(it) }
-                        ?: RepoScreenState.Failure(application.applicationContext.getString(R.string.no_repo))
+                    _searchScreenState.value = result.data?.let { SearchScreenState.RepoLoadingSuccess(it) }
+                        ?: SearchScreenState.Failure (application.applicationContext.getString(R.string.no_repo))
                 }
 
                 Status.ERROR -> {
-                    _repoScreenState.value = result.msg?.let { RepoScreenState.Failure(it) }
-                        ?: RepoScreenState.Failure(application.applicationContext.getString(R.string.something_wrong))
+                    _searchScreenState.value = result.msg?.let { SearchScreenState.Failure(it) }
+                        ?: SearchScreenState.Failure(application.applicationContext.getString(R.string.something_wrong))
                 }
             }
         }
     }
 
-    fun test() {
-        viewModelScope.launch {
-            val response = searchForUsers("panaset")
-            Log.d("MYTAG", "$response")
-            if (response.status == Status.SUCCESS) {
-                response.data?.let {
-                    if (it.isNotEmpty()) {
-                        val repoForFirstUser = searchForRepos(it[0])
-                        Log.d("MYTAG", "$repoForFirstUser")
-                        if (repoForFirstUser.status == Status.SUCCESS) {
-                            repoForFirstUser.data?.let { repos ->
-                                if (repos.isNotEmpty()) {
-                                    val details = getDetails(repos[0])
-                                    Log.d("MYTAG", "$details")
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    fun backToInitial() {
+        _searchScreenState.value = SearchScreenState.Initial
     }
 }
