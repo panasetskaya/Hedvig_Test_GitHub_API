@@ -19,9 +19,6 @@ class MainRepositoryImpl @Inject constructor(
     private val textResourceManager: TextResourceManager
 ) : MainRepository {
 
-//    private var userRepoCache: Map<Long, UserRepo> = mapOf()
-//    private var usernameCache: String? = null
-
     override suspend fun searchForUsersByQuery(query: String): NetworkResult<List<GitHubUser>> {
         try {
             val response = networking.githubApi.searchForUsers(query)

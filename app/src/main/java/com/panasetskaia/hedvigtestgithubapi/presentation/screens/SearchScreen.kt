@@ -5,13 +5,16 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -26,12 +29,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.panasetskaia.hedvigtestgithubapi.R
+import com.panasetskaia.hedvigtestgithubapi.domain.models.RepoEntity
 import com.panasetskaia.hedvigtestgithubapi.presentation.MainViewModel
 import com.panasetskaia.hedvigtestgithubapi.presentation.SearchScreenState
 import kotlinx.coroutines.flow.collectLatest
@@ -40,7 +45,8 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun SearchScreen(
     viewModel: MainViewModel,
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    onRepoClick: (repo: RepoEntity) -> Unit
 ) {
 
     val searchScreenState by viewModel.searchScreenState
@@ -82,17 +88,33 @@ fun SearchScreen(
                     if (it == "") viewModel.backToInitial()
                 },
                 leadingIcon = {
-                    Icon(
-                        rememberVectorPainter(image = Icons.Outlined.Search),
-                        stringResource(R.string.search_icon)
-                    )
+                     if (isSearchActive) {
+                         Icon(rememberVectorPainter(image = Icons.Outlined.Clear),
+                             stringResource(R.string.clear_search),
+                             modifier = Modifier.clickable {
+                                 query = ""
+                             })
+                     } else {
+                         Icon(
+                             rememberVectorPainter(image = Icons.Outlined.Search),
+                             stringResource(R.string.search_icon)
+                         )
+                     }
+
+                },
+                trailingIcon = {
+                    if (isSearchActive) {
+                        TrailingSearchButton {
+                            viewModel.searchByQuery(query)
+                        }
+                    }
                 },
                 placeholder = { Text(text = stringResource(id = R.string.search_for_user)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
             ) {
-                if (searchScreenState is SearchScreenState.UserSearchSuccess) {
+                if (searchScreenState is SearchScreenState.UserSearchSuccess && query!="") {
                     val items = (searchScreenState as SearchScreenState.UserSearchSuccess).list
                     LazyColumn {
                         items(items) { user ->
@@ -154,7 +176,7 @@ fun SearchScreen(
                                 bottom = 8.dp
                             )
                             .clickable {
-                                viewModel.loadDetails(repo)
+                                onRepoClick(repo)
                             }
                     )
                 }
@@ -188,4 +210,17 @@ fun CenterMessage(s: String, paddingValues: PaddingValues) {
             textAlign = TextAlign.Center
         )
     }
+}
+
+@Composable
+fun TrailingSearchButton(onClick: () -> Unit) {
+    Row(
+        modifier = Modifier.padding(8.dp,0.dp,8.dp,0.dp)
+    ) {
+        Button(onClick = { onClick() },
+            shape = RectangleShape) {
+            Text(text = stringResource(id = R.string.go))
+        }
+    }
+
 }

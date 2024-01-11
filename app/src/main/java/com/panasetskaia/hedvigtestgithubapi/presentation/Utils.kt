@@ -13,3 +13,7 @@ open class Event<out T>(private val content: T) {
         }
     }
 }
+
+fun screenSlashesInRepoName(repoName: String): String {
+    return  repoName.replace("/","-")
+}

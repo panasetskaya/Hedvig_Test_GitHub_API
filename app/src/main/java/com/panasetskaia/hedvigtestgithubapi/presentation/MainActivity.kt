@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.panasetskaia.hedvigtestgithubapi.presentation.screens.MainAppScreen
 import com.panasetskaia.hedvigtestgithubapi.presentation.screens.SearchScreen
 import com.panasetskaia.hedvigtestgithubapi.presentation.ui.theme.HedvigTestGitHubAPITheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,6 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val viewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -28,7 +30,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    SearchScreen(viewModel, PaddingValues(4.dp))
+                    MainAppScreen(viewModel, PaddingValues(4.dp))
                 }
             }
         }
